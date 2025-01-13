@@ -1,0 +1,29 @@
+-- Variável para armazenar o tempo do cooldown
+local lastTeleportTime = 0
+local teleportCooldown = 1  -- 1 segundo de cooldown
+
+-- Função para teleportar todos os jogadores
+local function teleportPlayersToPlayer(player)
+    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+        if otherPlayer ~= player then
+            -- Teleporta o jogador 'otherPlayer' para a posição do jogador que clicou a tecla
+            otherPlayer.Character:SetPrimaryPartCFrame(player.Character.HumanoidRootPart.CFrame)
+        end
+    end
+end
+
+-- Escuta quando a tecla T é pressionada
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessedEvent)
+    if gameProcessedEvent then return end  -- Se o evento já foi processado, ignora
+
+    -- Verifica se a tecla T foi pressionada
+    if input.KeyCode == Enum.KeyCode.T then
+        local player = game.Players.LocalPlayer  -- Obtém o jogador que pressionou a tecla
+        
+        -- Verifica se o cooldown já passou
+        if tick() - lastTeleportTime >= teleportCooldown then
+            lastTeleportTime = tick()  -- Atualiza o tempo do cooldown
+            teleportPlayersToPlayer(player)  -- Teleporta todos os jogadores
+        end
+    end
+end)
